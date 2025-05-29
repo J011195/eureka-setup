@@ -28,12 +28,6 @@ jobs:
           ./eureka-cli --help
           echo "Help command ran successfully"
 
-      - name: Clean Workspace
-        working-directory: ./eureka-cli
-        run: |
-          rm -rf ${{ github.workspace }}/*
-          git reset --hard origin/master
-
   release:
     name: Build and Release
     needs: test
