@@ -9,6 +9,3 @@ builds:
     goarch:
       - amd64
     ldflags: "-s -w"
-    hooks:
-      post:
-        - tar -czf dist/misc.tar.gz misc
