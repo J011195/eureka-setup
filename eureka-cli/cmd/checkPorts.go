@@ -51,7 +51,7 @@ func CheckPorts() {
 
 func deployNetcatContainer() {
 	preparedCommand := exec.Command("docker", "compose", "--progress", "plain", "--ansi", "never", "--project-name", "eureka", "up", "--detach", "netcat")
-	internal.RunCommandFromDir(checkPortsCommand, preparedCommand, internal.DockerComposeWorkDir)
+	internal.RunCommandFromDir(checkPortsCommand, preparedCommand, internal.GetHomeMiscDir(checkPortsCommand))
 }
 
 func getDeployedModules() []types.Container {

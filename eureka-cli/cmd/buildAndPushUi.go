@@ -43,7 +43,7 @@ func BuildAndPushUi() {
 	start := time.Now()
 
 	slog.Info(deployUiCommand, internal.GetFuncName(), fmt.Sprintf("Cloning %s from a %s branch", platformCompleteDir, defaultStripesBranch))
-	outputDir := fmt.Sprintf("%s/%s", internal.DockerComposeWorkDir, platformCompleteDir)
+	outputDir := fmt.Sprintf("%s/%s", internal.GetHomeMiscDir(deployUiCommand), platformCompleteDir)
 	stripesBranch := internal.GetStripesBranch(deployUiCommand, defaultStripesBranch)
 	internal.GitCloneRepository(deployUiCommand, withEnableDebug, internal.PlatformCompleteRepositoryUrl, stripesBranch, outputDir, false)
 
