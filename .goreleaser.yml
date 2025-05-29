@@ -1,5 +1,7 @@
 builds:
-  - main: ./eureka-cli
+  - id: eureka-cli
+    dir: ./eureka-cli
+    binary: eureka-cli # Optional: rename the output binary
     goos:
       - linux
       - windows
