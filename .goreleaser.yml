@@ -8,5 +8,33 @@ builds:
       - darwin
     goarch:
       - amd64
-      - arm64
     ldflags: "-s -w"
+
+archives:
+  - id: default
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: "{{ .ProjectName }}_{{ .Version }}_checksums.txt"
+
+snapshot:
+  name_template: "{{ .Version }}-SNAPSHOT-{{ .ShortCommit }}"
+
+release:
+  github:
+    owner: your-org
+    name: your-repo
+
+# 👇 Hook to compress the misc folder before release
+hooks:
+  post:
+    - tar -czf dist/misc.tar.gz misc
+
+# 👇 Upload the misc archive as a separate release asset
+artifacts:
+  - path: dist/misc.tar.gz
+    type: upload
