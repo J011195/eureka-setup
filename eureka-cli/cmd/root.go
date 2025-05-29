@@ -16,20 +16,22 @@ limitations under the License.
 package cmd
 
 import (
+	"embed"
 	"fmt"
+	"io/fs"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/folio-org/eureka-cli/internal"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"golang.org/x/exp/slog"
 )
 
 const rootCommand string = "Root"
 
 var (
 	withConfigFile        string
+	withProfile           string
 	withModuleName        string
 	withEnableDebug       bool
 	withBuildImages       bool
@@ -48,6 +50,8 @@ var (
 	withLength            int
 )
 
+var embeddedFs embed.FS
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "eureka-cli",
@@ -55,32 +59,97 @@ var rootCmd = &cobra.Command{
 	Long:  `Eureka CLI to deploy a local development environment.`,
 }
 
-func Execute() {
+func Execute(mainEmbeddedFs embed.FS) {
+	embeddedFs = mainEmbeddedFs
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
-func init() {
-	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVarP(&withConfigFile, "config", "c", "", fmt.Sprintf("Config file (default is $HOME/%s/%s.%s)", internal.ConfigDir, internal.ConfigCombined, internal.ConfigType))
-	rootCmd.PersistentFlags().BoolVarP(&withEnableDebug, "debug", "d", false, "Enable debug")
-}
-
 func initConfig() {
-	if withConfigFile != "" {
-		viper.SetConfigFile(withConfigFile)
-	} else {
-		home, err := os.UserHomeDir()
-		cobra.CheckErr(err)
-		configPath := path.Join(home, internal.ConfigDir)
-		viper.AddConfigPath(configPath)
-		viper.SetConfigType(internal.ConfigType)
-		viper.SetConfigName(internal.ConfigCombined)
-	}
+	setConfig(withEnableDebug, withConfigFile, withProfile)
+
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
-		slog.Error(rootCommand, internal.GetFuncName(), fmt.Sprintf("Cannot find or parse configuration file. Check that file exists and does not contain errors.: %s", withConfigFile))
-		panic(err)
+		recursivelySetupHomeConfigDir(withEnableDebug, embeddedFs)
+		if withEnableDebug {
+			fmt.Println()
+		}
 	}
+}
+
+func setConfig(enabledDebug bool, configFile string, profile string) {
+	if configFile == "" {
+		setConfigNameByProfile(enabledDebug, profile)
+		return
+	}
+
+	viper.SetConfigFile(configFile)
+}
+
+func setConfigNameByProfile(enabledDebug bool, profile string) {
+	home, err := os.UserHomeDir()
+	cobra.CheckErr(err)
+
+	configPath := filepath.Join(home, internal.ConfigDir)
+	viper.AddConfigPath(configPath)
+	viper.SetConfigType(internal.ConfigType)
+
+	configFile := getConfigFileByProfile(enabledDebug, profile)
+	viper.SetConfigName(configFile)
+}
+
+func getConfigFileByProfile(enabledDebug bool, profile string) string {
+	if profile == "" {
+		profile = internal.AvailableConfigs[0]
+	}
+
+	if enabledDebug {
+		fmt.Println("Using profile:", profile)
+		fmt.Println()
+	}
+
+	return fmt.Sprintf("config.%s", profile)
+}
+
+func recursivelySetupHomeConfigDir(enabledDebug bool, embeddedFs embed.FS) {
+	homeConfigDir := internal.GetHomeConfigDir(rootCommand)
+
+	err := fs.WalkDir(embeddedFs, ".", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		dstPath := filepath.Join(homeConfigDir, path)
+		if d.IsDir() {
+			err := os.MkdirAll(dstPath, 0755)
+			if err != nil {
+				return err
+			}
+		} else {
+			content, err := fs.ReadFile(embeddedFs, path)
+			if err != nil {
+				return err
+			}
+
+			err = os.WriteFile(dstPath, content, 0644)
+			if err != nil {
+				return err
+			}
+
+			if enabledDebug {
+				fmt.Println("Created:", dstPath)
+			}
+		}
+
+		return nil
+	})
+	cobra.CheckErr(err)
+}
+
+func init() {
+	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVarP(&withProfile, "profile", "p", "", fmt.Sprintf("Profile, available profile: %s, default profile: %s", internal.AvailableConfigs, internal.AvailableConfigs[0]))
+	rootCmd.PersistentFlags().StringVarP(&withConfigFile, "config", "c", "", fmt.Sprintf("Config file, default config file: config.%s.%s", internal.AvailableConfigs[0], internal.ConfigType))
+	rootCmd.PersistentFlags().BoolVarP(&withEnableDebug, "debug", "d", false, "Enable HTTP and other debug output")
 }
