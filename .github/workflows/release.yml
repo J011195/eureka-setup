@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-          cache-dependency-path: go.sum
+          cache-dependency-path: ./eureka-cli/go.sum
 
       - name: Build CLI
         working-directory: ./eureka-cli
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: "1.21"
-          cache-dependency-path: go.sum
+          cache-dependency-path: ./eureka-cli/go.sum
 
       - name: Set up GoReleaser
         uses: goreleaser/goreleaser-action@v5
@@ -58,6 +58,7 @@ jobs:
           path: |
             ~/.cache/go-build
             ~/go/pkg/mod
+            ./eureka-cli
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
