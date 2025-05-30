@@ -19,6 +19,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path"
 	"path/filepath"
@@ -68,24 +69,28 @@ func Execute(mainEmbeddedFs embed.FS) {
 }
 
 func initConfig() {
-	setConfig()
+	setConfig(withEnableDebug, withConfigFile, withProfile)
 
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
-		recursivelySetupHomeConfigDir(embeddedFs)
+		recursivelySetupHomeConfigDir(withEnableDebug, embeddedFs)
 	}
 }
 
-func setConfig() {
-	if withConfigFile == "" {
-		setConfigNameByProfile(withProfile)
+func setConfig(enabledDebug bool, configFile string, profile string) {
+	if configFile == "" {
+		setConfigNameByProfile(enabledDebug, profile)
 		return
 	}
 
-	viper.SetConfigFile(withConfigFile)
+	viper.SetConfigFile(configFile)
 }
 
-func setConfigNameByProfile(profile string) {
+func setConfigNameByProfile(enabledDebug bool, profile string) {
+	if enabledDebug {
+		slog.Info(rootCommand, internal.GetFuncName(), fmt.Sprintf("Using profile: %s", profile))
+	}
+
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 
@@ -94,9 +99,6 @@ func setConfigNameByProfile(profile string) {
 	viper.SetConfigType(internal.ConfigType)
 
 	configFile := getConfigFileByProfile(profile)
-
-	fmt.Println("Config file: ", configFile)
-
 	viper.SetConfigName(configFile)
 }
 
@@ -108,7 +110,7 @@ func getConfigFileByProfile(profile string) string {
 	return fmt.Sprintf("config.%s", profile)
 }
 
-func recursivelySetupHomeConfigDir(embeddedFs embed.FS) {
+func recursivelySetupHomeConfigDir(enabledDebug bool, embeddedFs embed.FS) {
 	homeConfigDir := internal.GetHomeConfigDir(rootCommand)
 
 	err := fs.WalkDir(embeddedFs, ".", func(path string, d fs.DirEntry, err error) error {
@@ -122,6 +124,10 @@ func recursivelySetupHomeConfigDir(embeddedFs embed.FS) {
 			if err != nil {
 				return err
 			}
+
+			if enabledDebug {
+				slog.Info(rootCommand, internal.GetFuncName(), fmt.Sprintf("Created directory: %s", homeConfigDir))
+			}
 		} else {
 			content, err := fs.ReadFile(embeddedFs, path)
 			if err != nil {
@@ -131,6 +137,10 @@ func recursivelySetupHomeConfigDir(embeddedFs embed.FS) {
 			err = os.WriteFile(dstPath, content, 0644)
 			if err != nil {
 				return err
+			}
+
+			if enabledDebug {
+				slog.Info(rootCommand, internal.GetFuncName(), fmt.Sprintf("Created file: %s", dstPath))
 			}
 		}
 
@@ -143,5 +153,5 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&withProfile, "profile", "p", "", fmt.Sprintf("Profile, available profile: %s, default profile: %s", internal.AvailableConfigs, internal.AvailableConfigs[0]))
 	rootCmd.PersistentFlags().StringVarP(&withConfigFile, "config", "c", "", fmt.Sprintf("Config file, default config file: config.%s.%s", internal.AvailableConfigs[0], internal.ConfigType))
-	rootCmd.PersistentFlags().BoolVarP(&withEnableDebug, "debug", "d", false, "Enable HTTP request and response debug dumps into stdout")
+	rootCmd.PersistentFlags().BoolVarP(&withEnableDebug, "debug", "d", false, "Enable HTTP and other debug output")
 }

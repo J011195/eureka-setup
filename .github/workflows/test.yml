@@ -34,5 +34,5 @@ jobs:
       - name: Run Help Command Test
         working-directory: ./eureka-cli
         run: |
-          ./eureka-cli help
+          ./eureka-cli help -d
           echo "Help command ran successfully"
