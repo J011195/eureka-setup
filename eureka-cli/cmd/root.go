@@ -94,6 +94,9 @@ func setConfigNameByProfile(profile string) {
 	viper.SetConfigType(internal.ConfigType)
 
 	configFile := getConfigFileByProfile(profile)
+
+	fmt.Println("Config file: ", configFile)
+
 	viper.SetConfigName(configFile)
 }
 
