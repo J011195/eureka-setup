@@ -19,9 +19,7 @@ import (
 	"embed"
 	"fmt"
 	"io/fs"
-	"log/slog"
 	"os"
-	"path"
 	"path/filepath"
 
 	"github.com/folio-org/eureka-cli/internal"
@@ -74,6 +72,9 @@ func initConfig() {
 	viper.AutomaticEnv()
 	if err := viper.ReadInConfig(); err != nil {
 		recursivelySetupHomeConfigDir(withEnableDebug, embeddedFs)
+		if withEnableDebug {
+			fmt.Println()
+		}
 	}
 }
 
@@ -87,24 +88,25 @@ func setConfig(enabledDebug bool, configFile string, profile string) {
 }
 
 func setConfigNameByProfile(enabledDebug bool, profile string) {
-	if enabledDebug {
-		slog.Info(rootCommand, internal.GetFuncName(), fmt.Sprintf("Using profile: %s", profile))
-	}
-
 	home, err := os.UserHomeDir()
 	cobra.CheckErr(err)
 
-	configPath := path.Join(home, internal.ConfigDir)
+	configPath := filepath.Join(home, internal.ConfigDir)
 	viper.AddConfigPath(configPath)
 	viper.SetConfigType(internal.ConfigType)
 
-	configFile := getConfigFileByProfile(profile)
+	configFile := getConfigFileByProfile(enabledDebug, profile)
 	viper.SetConfigName(configFile)
 }
 
-func getConfigFileByProfile(profile string) string {
+func getConfigFileByProfile(enabledDebug bool, profile string) string {
 	if profile == "" {
 		profile = internal.AvailableConfigs[0]
+	}
+
+	if enabledDebug {
+		fmt.Println("Using profile:", profile)
+		fmt.Println()
 	}
 
 	return fmt.Sprintf("config.%s", profile)
@@ -126,7 +128,7 @@ func recursivelySetupHomeConfigDir(enabledDebug bool, embeddedFs embed.FS) {
 			}
 
 			if enabledDebug {
-				slog.Info(rootCommand, internal.GetFuncName(), fmt.Sprintf("Created directory: %s", homeConfigDir))
+				fmt.Println("Created:", homeConfigDir)
 			}
 		} else {
 			content, err := fs.ReadFile(embeddedFs, path)
@@ -140,7 +142,7 @@ func recursivelySetupHomeConfigDir(enabledDebug bool, embeddedFs embed.FS) {
 			}
 
 			if enabledDebug {
-				slog.Info(rootCommand, internal.GetFuncName(), fmt.Sprintf("Created file: %s", dstPath))
+				fmt.Println("Created:", dstPath)
 			}
 		}
 

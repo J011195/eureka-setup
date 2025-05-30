@@ -12,7 +12,6 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -234,7 +233,8 @@ func GetHomeConfigDir(commandName string) string {
 		panic(err)
 	}
 
-	homeConfigDir := path.Join(home, ConfigDir)
+	homeConfigDir := filepath.Join(home, ConfigDir)
+
 	if err = os.MkdirAll(homeConfigDir, 0644); err != nil {
 		slog.Error(commandName, GetFuncName(), "os.MkdirAll error")
 		panic(err)
