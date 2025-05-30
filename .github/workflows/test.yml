@@ -1,0 +1,33 @@
+name: Release CLI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  test:
+    name: Test CLI Help Command
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.1"
+          cache-dependency-path: ./eureka-cli/go.sum
+
+      - name: Build CLI
+        working-directory: ./eureka-cli
+        run: go build -o eureka-cli
+
+      - name: Run Help Command Test
+        working-directory: ./eureka-cli
+        run: |
+          ./eureka-cli --help
+          echo "Help command ran successfully"
