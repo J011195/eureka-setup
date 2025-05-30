@@ -12,6 +12,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 	"os"
+	"path"
 	"path/filepath"
 	"runtime"
 	"slices"
@@ -178,16 +179,6 @@ func WriteJsonToFile(commandName string, filePath string, packageJson any) {
 	writer.Flush()
 }
 
-func CreateFile(commandName string, fileName string) *os.File {
-	filePointer, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		slog.Error(commandName, GetFuncName(), "os.OpenFile error")
-		panic(err)
-	}
-
-	return filePointer
-}
-
 func CheckIsRegularFile(commandName string, fileName string) {
 	fileStat, err := os.Stat(fileName)
 	if err != nil {
@@ -234,6 +225,22 @@ func GetCurrentWorkDirPath(commandName string) string {
 	}
 
 	return path
+}
+
+func GetHomeConfigDir(commandName string) string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		slog.Error(commandName, GetFuncName(), "os.UserHomeDir error")
+		panic(err)
+	}
+
+	homeConfigDir := path.Join(home, ConfigDir)
+	if err = os.MkdirAll(homeConfigDir, 0644); err != nil {
+		slog.Error(commandName, GetFuncName(), "os.MkdirAll error")
+		panic(err)
+	}
+
+	return homeConfigDir
 }
 
 // ######## Runtime ########
