@@ -7,7 +7,6 @@ on:
 
 jobs:
   test:
-    name: Test CLI Help Command
     uses: ./.github/workflows/test.yml
 
   release:
