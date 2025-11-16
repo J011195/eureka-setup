@@ -146,8 +146,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Define package exclusion pattern once for reuse across steps
-      EXCLUDE_PATTERN: '/(cmd|constant|field|actionparams|models|flags|execsvc|interceptmodulesvc)$|/internal/|eureka-cli$'
-      EXCLUDED_PACKAGES: 'cmd, constant, field, actionparams, models, flags, internal, execsvc, interceptmodulesvc'
+      EXCLUDE_PATTERN: '/(cmd|constant|field|actionparams|models|execsvc|interceptmodulesvc)$|/internal/|eureka-cli$'
+      EXCLUDED_PACKAGES: 'cmd, constant, field, actionparams, models, internal, execsvc, interceptmodulesvc'
       ALLOWED_LOW_COVERAGE: 'awssvc gitclient modulesvc uisvc vaultclient'
       COVERAGE_THRESHOLD: '70'
     steps:
@@ -283,7 +283,6 @@ jobs:
           echo ""
           echo "✅ All tested packages meet the ${COVERAGE_THRESHOLD}% coverage threshold (or are explicitly allowed exceptions)"
 
-      # TODO Register with codecov
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
@@ -291,6 +290,7 @@ jobs:
           flags: unittests
           name: codecov-umbrella
           fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   build-and-run-cli:
     name: Build and Run CLI (${{ matrix.os }}-${{ matrix.goarch }})
