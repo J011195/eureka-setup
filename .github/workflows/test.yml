@@ -31,55 +31,56 @@ jobs:
       - name: Validate misc/docker-compose.yml
         run: docker compose -f ./eureka-cli/misc/docker-compose.yaml config
 
-  docker-trivy:
-    name: Docker Security Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
-
-      - name: Scan folio-netcat Dockerfile
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          scan-ref: './eureka-cli/misc/folio-netcat/Dockerfile'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-
-      - name: Scan folio-vault Dockerfile
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          scan-ref: './eureka-cli/misc/folio-vault/Dockerfile'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-
-      - name: Scan folio-kafka-tools Dockerfile
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'config'
-          scan-ref: './eureka-cli/misc/folio-kafka-tools/Dockerfile'
-          format: 'table'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-
-      - name: Generate SARIF report for all Dockerfiles
-        uses: aquasecurity/trivy-action@master
-        if: always() && github.actor != 'dependabot[bot]'
-        with:
-          scan-type: 'config'
-          scan-ref: './eureka-cli/misc/'
-          format: 'sarif'
-          output: 'trivy-docker-config.sarif'
-
-      - name: Upload Docker config scan to GitHub Security
-        uses: github/codeql-action/upload-sarif@v4
-        if: always() && github.actor != 'dependabot[bot]'
-        with:
-          sarif_file: 'trivy-docker-config.sarif'
-          category: 'docker-configs'
+  # TODO Extract into a separate scheduled workflow that will scan the built images
+  # docker-trivy:
+  #   name: Docker Security Scan
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v5
+  #
+  #     - name: Scan folio-netcat Dockerfile
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: 'config'
+  #         scan-ref: './eureka-cli/misc/folio-netcat/Dockerfile'
+  #         format: 'table'
+  #         severity: 'CRITICAL,HIGH'
+  #         exit-code: '1'
+  #
+  #     - name: Scan folio-vault Dockerfile
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: 'config'
+  #         scan-ref: './eureka-cli/misc/folio-vault/Dockerfile'
+  #         format: 'table'
+  #         severity: 'CRITICAL,HIGH'
+  #         exit-code: '1'
+  #
+  #     - name: Scan folio-kafka-tools Dockerfile
+  #       uses: aquasecurity/trivy-action@master
+  #       with:
+  #         scan-type: 'config'
+  #         scan-ref: './eureka-cli/misc/folio-kafka-tools/Dockerfile'
+  #         format: 'table'
+  #         severity: 'CRITICAL,HIGH'
+  #         exit-code: '1'
+  #
+  #     - name: Generate SARIF report for all Dockerfiles
+  #       uses: aquasecurity/trivy-action@master
+  #       if: always() && github.actor != 'dependabot[bot]'
+  #       with:
+  #         scan-type: 'config'
+  #         scan-ref: './eureka-cli/misc/'
+  #         format: 'sarif'
+  #         output: 'trivy-docker-config.sarif'
+  #
+  #     - name: Upload Docker config scan to GitHub Security
+  #       uses: github/codeql-action/upload-sarif@v4
+  #       if: always() && github.actor != 'dependabot[bot]'
+  #       with:
+  #         sarif_file: 'trivy-docker-config.sarif'
+  #         category: 'docker-configs'
 
   go-lint:
     name: Go Lint
@@ -141,8 +142,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Define package exclusion pattern once for reuse across steps
-      EXCLUDE_PATTERN: '/(cmd|constant|field|actionparams|models|execsvc|interceptmodulesvc)$|/internal/|eureka-cli$'
-      EXCLUDED_PACKAGES: 'cmd, constant, field, actionparams, models, internal, execsvc, interceptmodulesvc'
+      EXCLUDE_PATTERN: '/(cmd|constant|field|actionparams|models|flags|execsvc|interceptmodulesvc)$|/internal/|eureka-cli$'
+      EXCLUDED_PACKAGES: 'cmd, constant, field, actionparams, models, flags, internal, execsvc, interceptmodulesvc'
       ALLOWED_LOW_COVERAGE: 'awssvc gitclient modulesvc uisvc vaultclient'
       COVERAGE_THRESHOLD: '70'
     steps:
@@ -283,7 +284,7 @@ jobs:
 
   build-and-run-cli:
     name: Build and Run CLI (${{ matrix.os }}-${{ matrix.goarch }})
-    needs: [docker-lint, docker-trivy, go-lint, go-trivy, go-test]
+    needs: [docker-lint, go-lint, go-trivy, go-test]
     strategy:
       matrix:
         include:

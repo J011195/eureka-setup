@@ -109,11 +109,13 @@ Available flags:
 | `--platformCompleteURL`  |            | Platform Complete UI URL                            | buildAndPushUi                                                                          |
 | `--privatePort`          |            | Private port                                        | updateModuleDiscovery                                                                   |
 | `--purgeSchemas`         |            | Purge PostgreSQL schemas on uninstallation          | removeTenantEntitlements, undeployApplication                                           |
+| `--removeApplication`    |            | Remove application from the DB                      | undeployApplication                                                                     |
 | `--restore`              | `-r`       | Restore module & sidecar                            | interceptModule, updateModuleDiscovery                                                  |
 | `--sidecarUrl`           | `-s`       | Sidecar URL                                         | interceptModule, updateModuleDiscovery                                                  |
 | `--singleTenant`         |            | Use for Single Tenant workflow                      | deployUi, buildAndPushUi                                                                |
 | `--skipCapabilitySets`   |            | Skip refreshing capability sets                     | undeployApplication                                                                     |
 | `--tenant`               | `-t`       | Tenant name                                         | getKeycloakAccessToken, getEdgeApiKey, buildAndPushUi                                   |
+| `--skipRegistry`         |            | Skip retrieving latest registry module versions     | interceptModules, deployApplication, deployManagement, deployModules                    |
 | `--updateCloned`         | `-u`       | Update Git cloned projects                          | buildSystem, deployApplication, deployUi, buildAndPushUi                                |
 | `--user`                 | `-x`       | User for edge API key generation                    | getEdgeApiKey                                                                           |
 | `--versions`             | `-v`       | Number of versions to display                       | listModuleVersions                                                                      |
@@ -672,3 +674,29 @@ Module readiness checks are failing
 `"The module is not entitled on tenant ..."`
 
 - Rerun the deployment again with more available RAM
+
+## Documentation
+
+Comprehensive guides and documentation are available in the [`help/`](help/) directory:
+
+### Testing & Quality
+
+- **[Testing and Linting Guide](help/guides/testing-and-linting.md)** - Complete testing commands reference
+- **[Code Coverage Guide](help/guides/code-coverage.md)** - Coverage metrics and requirements (**Current: 78.5%**)
+- **[Testcontainers Integration](help/guides/testcontainers-integration-guide.md)** - Integration testing with containers
+- **[Integration Test Structure](help/guides/integration-test-structure.md)** - Best practices for organizing tests
+
+### Development
+
+- **[Development Guide](docs/DEVELOPMENT.md)** - Environment setup and workflow
+- **[Build Guide](docs/BUILD.md)** - Building for different platforms
+- **[AWS CLI Guide](docs/AWS_CLI.md)** - AWS configuration
+
+### Go Patterns & Best Practices
+
+- **[Map Access Patterns](help/guides/map-access.md)** - Safe map access with comma-ok idiom
+- **[Type Assertions](help/guides/type-assertions.md)** - Type assertion patterns and safety
+- **[Config Migration](help/guides/config-migration.md)** - Migrating to strongly-typed configuration
+- **[Structured Logging](help/guides/structured-logging-guide.md)** - Implementing structured logging with slog
+
+For more information, see the [help/](help/) directory.
