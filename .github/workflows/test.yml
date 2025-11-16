@@ -156,6 +156,11 @@ jobs:
       - name: Setup Go Environment
         uses: ./.github/actions/setup-go
 
+      - name: Prepare .eureka config directory
+        run: |
+          mkdir -p /home/runner/.eureka
+          chmod -R 0700 /home/runner/.eureka
+
       - name: Run tests with coverage
         working-directory: ./eureka-cli
         run: |
