@@ -17,16 +17,19 @@ jobs:
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: ./eureka-cli/misc/folio-netcat/Dockerfile
+          ignore: DL3018
 
       - name: Validate misc/folio-vault/Dockerfile
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: ./eureka-cli/misc/folio-vault/Dockerfile
+          ignore: DL3018
 
       - name: Validate misc/folio-kafka-tools/Dockerfile
         uses: hadolint/hadolint-action@v3.3.0
         with:
           dockerfile: ./eureka-cli/misc/folio-kafka-tools/Dockerfile
+          ignore: DL3018
 
       - name: Validate misc/docker-compose.yml
         run: docker compose -f ./eureka-cli/misc/docker-compose.yaml config

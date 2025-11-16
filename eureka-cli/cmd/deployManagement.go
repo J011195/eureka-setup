@@ -80,7 +80,9 @@ func (run *Run) DeployManagement() error {
 	time.Sleep(constant.DeployManagementWait)
 
 	slog.Info(run.Config.Action.Name, "text", "WAITING FOR MANAGEMENT MODULES TO BECOME READY")
-	run.CheckDeployedModuleReadiness(constant.Management, deployedModules)
+	if err := run.CheckDeployedModuleReadiness(constant.Management, deployedModules); err != nil {
+		return err
+	}
 
 	slog.Info(run.Config.Action.Name, "text", "WAITING FOR KONG ROUTES TO BECOME READY")
 	if err := run.Config.KongSvc.CheckRouteReadiness(); err != nil {

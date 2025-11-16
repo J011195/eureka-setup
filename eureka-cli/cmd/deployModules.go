@@ -103,7 +103,9 @@ func (run *Run) DeployModules() error {
 	time.Sleep(constant.DeployModulesWait)
 
 	slog.Info(run.Config.Action.Name, "text", "WAITING FOR MODULES TO BECOME READY")
-	run.CheckDeployedModuleReadiness(constant.Module, deployedModules)
+	if err := run.CheckDeployedModuleReadiness(constant.Module, deployedModules); err != nil {
+		return err
+	}
 
 	slog.Info(run.Config.Action.Name, "text", "CREATING APPLICATION")
 	if err := run.setKeycloakMasterAccessTokenIntoContext(constant.ClientCredentials); err != nil {
