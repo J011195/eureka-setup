@@ -14,36 +14,36 @@ import (
 
 // ==================== Constructor Tests ====================
 
-// func TestNew(t *testing.T) {
-// 	t.Run("TestNew_Success", func(t *testing.T) {
-// 		// Arrange
-// 		vc := testhelpers.SetupViperForTest(map[string]any{
-// 			field.ApplicationName:    "test-app",
-// 			field.ApplicationVersion: "1.0.0",
-// 		})
-// 		defer vc.Reset()
+func TestNew(t *testing.T) {
+	t.Run("TestNew_Success", func(t *testing.T) {
+		// Arrange
+		vc := testhelpers.SetupViperForTest(map[string]any{
+			field.ApplicationName:    "test-app",
+			field.ApplicationVersion: "1.0.0",
+		})
+		defer vc.Reset()
 
-// 		params := &action.Param{}
+		params := &action.Param{}
 
-// 		// Act
-// 		result := action.New("test-action", "http://localhost:%s", params)
+		// Act
+		result := action.New("test-action", "http://localhost:%s", params)
 
-// 		// Assert
-// 		assert.NotNil(t, result)
-// 		assert.Equal(t, "test-action", result.Name)
-// 		assert.Equal(t, "http://localhost:%s", result.GatewayURLTemplate)
-// 		assert.Equal(t, params, result.Param)
-// 		assert.Equal(t, "", result.VaultRootToken)
-// 		assert.Equal(t, "", result.KeycloakAccessToken)
-// 		assert.Equal(t, "", result.KeycloakMasterAccessToken)
-// 		assert.Equal(t, "test-app", result.ConfigApplicationName)
-// 		assert.Equal(t, "1.0.0", result.ConfigApplicationVersion)
-// 		assert.Equal(t, "test-app-1.0.0", result.ConfigApplicationID)
-// 		assert.NotNil(t, result.Caser)
-// 		assert.NotNil(t, result.ReservedPorts)
-// 		assert.Empty(t, result.ReservedPorts)
-// 	})
-// }
+		// Assert
+		assert.NotNil(t, result)
+		assert.Equal(t, "test-action", result.Name)
+		assert.Equal(t, "http://localhost:%s", result.GatewayURLTemplate)
+		assert.Equal(t, params, result.Param)
+		assert.Equal(t, "", result.VaultRootToken)
+		assert.Equal(t, "", result.KeycloakAccessToken)
+		assert.Equal(t, "", result.KeycloakMasterAccessToken)
+		assert.Equal(t, "test-app", result.ConfigApplicationName)
+		assert.Equal(t, "1.0.0", result.ConfigApplicationVersion)
+		assert.Equal(t, "test-app-1.0.0", result.ConfigApplicationID)
+		assert.NotNil(t, result.Caser)
+		assert.NotNil(t, result.ReservedPorts)
+		assert.Empty(t, result.ReservedPorts)
+	})
+}
 
 func TestNewGeneric_AllViperFields(t *testing.T) {
 	t.Run("TestNewGeneric_AllViperFields_LoadsAllViperConfigurationFields", func(t *testing.T) {
