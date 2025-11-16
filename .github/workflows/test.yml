@@ -161,7 +161,7 @@ jobs:
         working-directory: ./eureka-cli
         run: |
           echo "Running tests for testable packages (excluding infrastructure)..."
-          go list ./... | grep -Ev "$EXCLUDE_PATTERN" | xargs go test -parallel 4 -coverprofile=coverage.out -covermode=atomic
+          go list ./... | grep -Ev "$EXCLUDE_PATTERN" | xargs go test -parallel 10 -coverprofile=coverage.out -covermode=atomic
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
