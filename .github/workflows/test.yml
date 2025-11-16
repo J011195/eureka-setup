@@ -140,6 +140,7 @@ jobs:
         with:
           sarif_file: 'trivy-results.sarif'
 
+  # TODO Run go test ./... only once
   go-test:
     name: Go Test
     runs-on: ubuntu-latest
@@ -282,6 +283,7 @@ jobs:
           echo ""
           echo "✅ All tested packages meet the ${COVERAGE_THRESHOLD}% coverage threshold (or are explicitly allowed exceptions)"
 
+      # TODO Register with codecov
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
