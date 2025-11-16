@@ -146,10 +146,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Define package exclusion pattern once for reuse across steps
-      EXCLUDE_PATTERN: '/(cmd|constant|field|actionparams|models|execsvc|interceptmodulesvc)$|/internal/|eureka-cli$'
-      EXCLUDED_PACKAGES: 'cmd, constant, field, actionparams, models, internal, execsvc, interceptmodulesvc'
-      ALLOWED_LOW_COVERAGE: 'awssvc gitclient modulesvc uisvc vaultclient'
-      COVERAGE_THRESHOLD: '70'
+      EXCLUDE_PATTERN: '/(cmd|constant|field|models|execsvc|interceptmodulesvc)$|/internal/|eureka-cli$'
+      EXCLUDED_PACKAGES: 'cmd, constant, field, models, internal, execsvc, interceptmodulesvc'
+      # ALLOWED_LOW_COVERAGE: 'awssvc gitclient modulesvc uisvc vaultclient'
+      # COVERAGE_THRESHOLD: '70'
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -289,7 +289,7 @@ jobs:
           files: ./eureka-cli/coverage.out
           flags: unittests
           name: codecov-umbrella
-          fail_ci_if_error: false
+          fail_ci_if_error: true
           token: ${{ secrets.CODECOV_TOKEN }}
 
   build-and-run-cli:
