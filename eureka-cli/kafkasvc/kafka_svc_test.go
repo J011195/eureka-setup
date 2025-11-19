@@ -27,7 +27,7 @@ func TestNew(t *testing.T) {
 	assert.Equal(t, mockExec, svc.ExecSvc)
 }
 
-func TestCheckBrokenReadiness_Success(t *testing.T) {
+func TestCheckBrokerReadiness_Success(t *testing.T) {
 	// Arrange
 	action := testhelpers.NewMockAction()
 	mockExec := new(testhelpers.MockCommandExecutor)
@@ -45,14 +45,14 @@ func TestCheckBrokenReadiness_Success(t *testing.T) {
 	})).Return(*stdout, *stderr, nil).Once()
 
 	// Act
-	err := svc.CheckBrokenReadiness()
+	err := svc.CheckBrokerReadiness()
 
 	// Assert
 	assert.NoError(t, err)
 	mockExec.AssertExpectations(t)
 }
 
-func TestCheckBrokenReadiness_CommandError(t *testing.T) {
+func TestCheckBrokerReadiness_CommandError(t *testing.T) {
 	// Arrange
 	action := testhelpers.NewMockAction()
 	mockExec := new(testhelpers.MockCommandExecutor)
@@ -65,7 +65,7 @@ func TestCheckBrokenReadiness_CommandError(t *testing.T) {
 	mockExec.On("ExecReturnOutput", mock.Anything).Return(*stdout, *stderr, cmdErr).Once()
 
 	// Act
-	err := svc.CheckBrokenReadiness()
+	err := svc.CheckBrokerReadiness()
 
 	// Assert
 	assert.Error(t, err)
@@ -73,7 +73,7 @@ func TestCheckBrokenReadiness_CommandError(t *testing.T) {
 	mockExec.AssertExpectations(t)
 }
 
-func TestCheckBrokenReadiness_StderrPresent(t *testing.T) {
+func TestCheckBrokerReadiness_StderrPresent(t *testing.T) {
 	// Arrange
 	action := testhelpers.NewMockAction()
 	mockExec := new(testhelpers.MockCommandExecutor)
@@ -85,7 +85,7 @@ func TestCheckBrokenReadiness_StderrPresent(t *testing.T) {
 	mockExec.On("ExecReturnOutput", mock.Anything).Return(*stdout, *stderr, nil).Once()
 
 	// Act
-	err := svc.CheckBrokenReadiness()
+	err := svc.CheckBrokerReadiness()
 
 	// Assert
 	assert.Error(t, err)
@@ -93,7 +93,7 @@ func TestCheckBrokenReadiness_StderrPresent(t *testing.T) {
 	mockExec.AssertExpectations(t)
 }
 
-func TestCheckBrokenReadiness_EmptyStdout(t *testing.T) {
+func TestCheckBrokerReadiness_EmptyStdout(t *testing.T) {
 	// Arrange
 	action := testhelpers.NewMockAction()
 	mockExec := new(testhelpers.MockCommandExecutor)
@@ -105,7 +105,7 @@ func TestCheckBrokenReadiness_EmptyStdout(t *testing.T) {
 	mockExec.On("ExecReturnOutput", mock.Anything).Return(*stdout, *stderr, nil).Once()
 
 	// Act
-	err := svc.CheckBrokenReadiness()
+	err := svc.CheckBrokerReadiness()
 
 	// Assert
 	assert.Error(t, err)
@@ -126,7 +126,7 @@ func TestPollConsumerGroup_ZeroLag(t *testing.T) {
 
 	tenantName := "diku"
 
-	// Mock CheckBrokenReadiness call - broker ready
+	// Mock CheckBrokerReadiness call - broker ready
 	stdout := bytes.NewBufferString("broker ready")
 	stderr := bytes.NewBuffer(nil)
 	mockExec.On("ExecReturnOutput", mock.Anything).Return(*stdout, *stderr, nil).Once()

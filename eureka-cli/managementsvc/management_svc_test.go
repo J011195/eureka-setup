@@ -57,6 +57,7 @@ func TestGetTenants_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -107,6 +108,7 @@ func TestGetTenants_AllTenantType(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -147,6 +149,7 @@ func TestGetTenants_NotFound(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -180,6 +183,7 @@ func TestGetTenants_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -207,6 +211,7 @@ func TestGetApplications_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -237,6 +242,7 @@ func TestGetApplications_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -262,6 +268,7 @@ func TestGetApplications_NilResponse(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -284,6 +291,7 @@ func TestRemoveApplication_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -315,6 +323,7 @@ func TestRemoveApplication_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -340,6 +349,7 @@ func TestGetModuleDiscovery_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -373,6 +383,7 @@ func TestGetModuleDiscovery_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -399,6 +410,7 @@ func TestUpdateModuleDiscovery_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -437,6 +449,7 @@ func TestUpdateModuleDiscovery_RestoreURL(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -474,6 +487,7 @@ func TestUpdateModuleDiscovery_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -500,6 +514,7 @@ func TestCreateTenants_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{
 			"consortium":    "test-consortium",
@@ -540,6 +555,7 @@ func TestCreateTenants_CentralTenant(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"central-tenant": map[string]any{
 			"consortium":     "test-consortium",
@@ -578,6 +594,7 @@ func TestCreateTenants_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -605,6 +622,7 @@ func TestRemoveTenants_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -642,6 +660,7 @@ func TestRemoveTenants_GetTenantsError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -665,6 +684,7 @@ func TestCreateTenantEntitlement_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -739,6 +759,7 @@ func TestRemoveTenantEntitlements_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -787,6 +808,7 @@ func TestRemoveTenantEntitlements_GetTenantsError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -810,6 +832,7 @@ func TestGetModuleDiscovery_NilResponse(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -832,6 +855,7 @@ func TestUpdateModuleDiscovery_EdgeModule(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -870,6 +894,7 @@ func TestCreateTenants_NoConsortium(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"standalone-tenant": map[string]any{},
 	}
@@ -906,6 +931,7 @@ func TestRemoveTenants_TenantNotInConfig(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"other-tenant": map[string]any{},
 	}
@@ -938,6 +964,7 @@ func TestCreateTenantEntitlement_TenantNotInConfig(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"other-tenant": map[string]any{},
 	}
@@ -974,6 +1001,7 @@ func TestRemoveTenantEntitlements_TenantNotInConfig(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"other-tenant": map[string]any{},
 	}
@@ -1005,6 +1033,7 @@ func TestGetApplications_DecodeError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -1031,6 +1060,7 @@ func TestGetModuleDiscovery_DecodeError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	mockTenantSvc := &MockTenantSvc{}
 	svc := managementsvc.New(action, mockHTTP, mockTenantSvc)
 
@@ -1057,6 +1087,7 @@ func TestRemoveTenants_DeleteError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -1094,6 +1125,7 @@ func TestCreateTenantEntitlement_PostError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -1137,6 +1169,7 @@ func TestRemoveTenantEntitlements_DeleteError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigTenants = map[string]any{
 		"test-tenant": map[string]any{},
 	}
@@ -1176,6 +1209,7 @@ func TestCreateApplications_MinimalSuccess(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1261,6 +1295,7 @@ func TestCreateApplications_WithFrontendModule(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1326,6 +1361,7 @@ func TestCreateApplications_SkipsManagementModule(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1393,6 +1429,7 @@ func TestCreateApplications_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1434,6 +1471,7 @@ func TestCreateApplications_WithModuleVersionOverride(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1521,6 +1559,7 @@ func TestCreateApplications_WithFetchDescriptorsFromRemote(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1621,6 +1660,7 @@ func TestCreateApplications_FetchDescriptorError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1676,6 +1716,7 @@ func TestCreateApplications_WithDependencies(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1732,6 +1773,7 @@ func TestCreateApplications_SkipsModuleNotInConfig(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1796,6 +1838,7 @@ func TestCreateApplications_SkipsModuleWithDeployFalse(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1863,6 +1906,7 @@ func TestCreateApplications_WithEurekaModules(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -1943,6 +1987,7 @@ func TestCreateApplications_DiscoveryPostError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2016,6 +2061,7 @@ func TestCreateApplications_WithModuleURLs(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2103,6 +2149,7 @@ func TestCreateApplications_FrontendModuleWithFetchDescriptors(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2187,6 +2234,7 @@ func TestCreateApplications_FrontendModuleWithURL(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2259,6 +2307,7 @@ func TestCreateApplications_FrontendVersionOverride(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2331,6 +2380,7 @@ func TestCreateApplications_MixedBackendAndFrontend(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2430,6 +2480,7 @@ func TestCreateApplications_BothModulesBackendVersionOverride(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2525,6 +2576,7 @@ func TestCreateApplications_BothModulesFrontendVersionOverride(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"
@@ -2621,6 +2673,7 @@ func TestCreateApplications_BothModulesBothVersionOverrides(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "test-token"
 	action.ConfigApplicationID = "test-app"
 	action.ConfigApplicationName = "Test Application"
 	action.ConfigApplicationVersion = "1.0.0"

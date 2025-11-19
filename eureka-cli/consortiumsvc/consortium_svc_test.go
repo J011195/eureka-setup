@@ -68,6 +68,7 @@ func TestGetConsortiumByName_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -114,6 +115,7 @@ func TestGetConsortiumByName_NotFound(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -147,6 +149,7 @@ func TestGetConsortiumByName_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -358,6 +361,7 @@ func TestCreateConsortium_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -408,6 +412,7 @@ func TestCreateConsortium_AlreadyExists(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -450,6 +455,7 @@ func TestCreateConsortium_GetError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -476,6 +482,7 @@ func TestCreateConsortium_PostError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -754,6 +761,7 @@ func TestCreateConsortiumTenants_CentralTenant(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -825,6 +833,7 @@ func TestCreateConsortiumTenants_MemberTenant(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -905,6 +914,7 @@ func TestCreateConsortiumTenants_AlreadyExists(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -947,6 +957,7 @@ func TestCreateConsortiumTenants_GetTenantByIDError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -977,6 +988,7 @@ func TestCreateConsortiumTenants_UserGetError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -1020,6 +1032,7 @@ func TestCreateConsortiumTenants_PostError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -1064,6 +1077,7 @@ func TestCreateConsortiumTenants_StatusCheckError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -1118,6 +1132,7 @@ func TestEnableCentralOrdering_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -1166,6 +1181,7 @@ func TestEnableCentralOrdering_AlreadyEnabled(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -1205,6 +1221,7 @@ func TestEnableCentralOrdering_GetError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 
@@ -1229,6 +1246,7 @@ func TestEnableCentralOrdering_PostError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	mockUserSvc := &MockUserSvc{}
 	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
 

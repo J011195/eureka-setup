@@ -30,6 +30,7 @@ func TestReindexInventoryRecords_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := searchsvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -71,6 +72,7 @@ func TestReindexInventoryRecords_HTTPErrorContinues(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := searchsvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -113,6 +115,7 @@ func TestReindexInventoryRecords_ValidationErrorContinues(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := searchsvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -166,6 +169,7 @@ func TestReindexInventoryRecords_BlankIDErrorContinues(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := searchsvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -267,6 +271,7 @@ func TestReindexInstanceRecords_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := searchsvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -293,6 +298,7 @@ func TestReindexInstanceRecords_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := searchsvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"

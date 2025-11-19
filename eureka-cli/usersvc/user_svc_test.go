@@ -29,6 +29,7 @@ func TestGet_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := usersvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -76,6 +77,7 @@ func TestGet_UserNotFound(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := usersvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -112,6 +114,7 @@ func TestGet_HTTPError(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := usersvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
@@ -138,6 +141,7 @@ func TestGet_WithPersonalInfo(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
 	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
 	svc := usersvc.New(action, mockHTTP)
 
 	tenantName := "test-tenant"
