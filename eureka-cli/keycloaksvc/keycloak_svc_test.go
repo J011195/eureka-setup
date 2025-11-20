@@ -1073,6 +1073,28 @@ func TestCreateRoles_HTTPError(t *testing.T) {
 	mockHTTP.AssertExpectations(t)
 }
 
+func TestCreateRoles_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	action.ConfigRoles = map[string]any{
+		"admin": map[string]any{
+			"tenant": "test-tenant",
+		},
+	}
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.CreateRoles("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
 func TestRemoveRoles_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
@@ -1143,6 +1165,24 @@ func TestRemoveRoles_GetRolesError(t *testing.T) {
 	mockHTTP.AssertExpectations(t)
 }
 
+func TestRemoveRoles_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.RemoveRoles("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything)
+}
+
 // ==================== User Tests ====================
 
 func TestGetUsers_Success(t *testing.T) {
@@ -1170,7 +1210,11 @@ func TestGetUsers_Success(t *testing.T) {
 		mock.MatchedBy(func(urlStr string) bool {
 			return strings.Contains(urlStr, "/users?offset=0&limit=10000")
 		}),
-		mock.Anything,
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == "test-tenant" &&
+				headers[constant.OkapiTokenHeader] == "test-token" &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		}),
 		mock.Anything).
 		Run(func(args mock.Arguments) {
 			target := args.Get(2).(*models.KeycloakUsersResponse)
@@ -1271,7 +1315,11 @@ func TestCreateUsers_Success(t *testing.T) {
 			return strings.Contains(urlStr, "/users-keycloak/users")
 		}),
 		mock.Anything,
-		mock.Anything,
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == "test-tenant" &&
+				headers[constant.OkapiTokenHeader] == "test-token" &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		}),
 		mock.Anything).
 		Run(func(args mock.Arguments) {
 			target := args.Get(3).(*map[string]any)
@@ -1284,7 +1332,11 @@ func TestCreateUsers_Success(t *testing.T) {
 			return strings.Contains(urlStr, "/authn/credentials")
 		}),
 		mock.Anything,
-		mock.Anything).
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == "test-tenant" &&
+				headers[constant.OkapiTokenHeader] == "test-token" &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		})).
 		Return(nil)
 
 	rolesResponse := models.KeycloakRolesResponse{
@@ -1297,7 +1349,11 @@ func TestCreateUsers_Success(t *testing.T) {
 		mock.MatchedBy(func(urlStr string) bool {
 			return strings.Contains(urlStr, "/roles?query=name==admin")
 		}),
-		mock.Anything,
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == "test-tenant" &&
+				headers[constant.OkapiTokenHeader] == "test-token" &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		}),
 		mock.Anything).
 		Run(func(args mock.Arguments) {
 			target := args.Get(2).(*models.KeycloakRolesResponse)
@@ -1310,7 +1366,11 @@ func TestCreateUsers_Success(t *testing.T) {
 			return strings.Contains(urlStr, "/roles/users")
 		}),
 		mock.Anything,
-		mock.Anything).
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == "test-tenant" &&
+				headers[constant.OkapiTokenHeader] == "test-token" &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		})).
 		Return(nil)
 
 	// Act
@@ -1340,6 +1400,59 @@ func TestCreateUsers_SkipsDifferentTenant(t *testing.T) {
 	// Assert
 	assert.NoError(t, err)
 	mockHTTP.AssertNotCalled(t, "PostReturnStruct")
+}
+
+func TestCreateUsers_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	action.ConfigUsers = map[string]any{
+		"testuser": map[string]any{
+			"tenant":     "test-tenant",
+			"password":   "pass123",
+			"first-name": "Test",
+			"last-name":  "User",
+			"roles":      []any{"admin"},
+		},
+	}
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.CreateUsers("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "PostReturnStruct", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
+func TestCreateUsers_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	action.ConfigUsers = map[string]any{
+		"testuser": map[string]any{
+			"tenant":     "", // Empty tenant in user config
+			"password":   "pass123",
+			"first-name": "Test",
+			"last-name":  "User",
+			"roles":      []any{"admin"},
+		},
+	}
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.CreateUsers("") // Call with empty tenant to match the user's tenant
+
+	// Assert
+	assert.Error(t, err) // Error because tenant is blank when creating headers
+	mockHTTP.AssertNotCalled(t, "PostReturnStruct", mock.Anything, mock.Anything, mock.Anything, mock.Anything)
 }
 
 func TestRemoveUsers_Success(t *testing.T) {
@@ -1408,6 +1521,42 @@ func TestRemoveUsers_GetUsersError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, expectedError, err)
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestRemoveUsers_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.RemoveUsers("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything)
+}
+
+func TestRemoveUsers_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.RemoveUsers("") // Empty tenant
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything)
 }
 
 // ==================== Capability Set Tests ====================
@@ -1675,6 +1824,24 @@ func TestAttachCapabilitySetsToRoles_GetRolesError(t *testing.T) {
 	mockHTTP.AssertExpectations(t)
 }
 
+func TestAttachCapabilitySetsToRoles_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.AttachCapabilitySetsToRoles("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostRetryReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
 func TestDetachCapabilitySetsFromRoles_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
@@ -1745,6 +1912,24 @@ func TestDetachCapabilitySetsFromRoles_NoRoles(t *testing.T) {
 	// Assert
 	assert.NoError(t, err)
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestDetachCapabilitySetsFromRoles_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.DetachCapabilitySetsFromRoles("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "Delete", mock.Anything, mock.Anything)
 }
 
 func TestAttachCapabilitySetsToRoles_WithAllCapabilitySets(t *testing.T) {
