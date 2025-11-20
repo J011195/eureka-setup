@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/folio-org/eureka-cli/constant"
 	"github.com/folio-org/eureka-cli/internal/testhelpers"
 	"github.com/folio-org/eureka-cli/models"
 	"github.com/folio-org/eureka-cli/usersvc"
@@ -52,7 +53,11 @@ func TestGet_Success(t *testing.T) {
 			return assert.Contains(t, url, "username=="+username) &&
 				assert.Contains(t, url, "limit=1")
 		}),
-		mock.Anything,
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == tenantName &&
+				headers[constant.OkapiTokenHeader] == action.KeycloakAccessToken &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		}),
 		mock.Anything).
 		Run(func(args mock.Arguments) {
 			target := args.Get(2).(*models.UserResponse)
@@ -108,6 +113,27 @@ func TestGet_UserNotFound(t *testing.T) {
 	assert.Contains(t, err.Error(), username)
 	assert.Contains(t, err.Error(), tenantName)
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestGet_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token will cause header creation to fail
+	svc := usersvc.New(action, mockHTTP)
+
+	tenantName := "test-tenant"
+	username := "testuser"
+
+	// Act
+	user, err := svc.Get(tenantName, username)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Nil(t, user)
+	assert.Contains(t, err.Error(), "access token")
+	// HTTP client should not be called since header creation failed
+	mockHTTP.AssertNotCalled(t, "GetReturnStruct")
 }
 
 func TestGet_HTTPError(t *testing.T) {

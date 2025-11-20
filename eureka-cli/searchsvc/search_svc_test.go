@@ -5,6 +5,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/folio-org/eureka-cli/constant"
 	"github.com/folio-org/eureka-cli/internal/testhelpers"
 	"github.com/folio-org/eureka-cli/models"
 	"github.com/folio-org/eureka-cli/searchsvc"
@@ -51,7 +52,11 @@ func TestReindexInventoryRecords_Success(t *testing.T) {
 				_ = json.Unmarshal(payload, &data)
 				return data["resourceName"] == record && data["recreateIndex"] == "true"
 			}),
-			mock.Anything,
+			mock.MatchedBy(func(headers map[string]string) bool {
+				return headers[constant.OkapiTenantHeader] == tenantName &&
+					headers[constant.OkapiTokenHeader] == action.KeycloakAccessToken &&
+					headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+			}),
 			mock.Anything).
 			Run(func(args mock.Arguments) {
 				target := args.Get(3).(*models.ReindexJobResponse)
@@ -66,6 +71,70 @@ func TestReindexInventoryRecords_Success(t *testing.T) {
 	// Assert
 	assert.NoError(t, err)
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestReindexInventoryRecords_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token will cause header creation to fail
+	svc := searchsvc.New(action, mockHTTP)
+
+	// Act
+	err := svc.ReindexInventoryRecords("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "access token")
+	mockHTTP.AssertNotCalled(t, "PostReturnStruct")
+}
+
+func TestReindexInventoryRecords_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	svc := searchsvc.New(action, mockHTTP)
+
+	// Act
+	err := svc.ReindexInventoryRecords("")
+
+	// Assert
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "tenant name")
+	mockHTTP.AssertNotCalled(t, "PostReturnStruct")
+}
+
+func TestReindexInstanceRecords_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token will cause header creation to fail
+	svc := searchsvc.New(action, mockHTTP)
+
+	// Act
+	err := svc.ReindexInstanceRecords("test-tenant")
+
+	// Assert
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "access token")
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent")
+}
+
+func TestReindexInstanceRecords_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	svc := searchsvc.New(action, mockHTTP)
+
+	// Act
+	err := svc.ReindexInstanceRecords("")
+
+	// Assert
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "tenant name")
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent")
 }
 
 func TestReindexInventoryRecords_HTTPErrorContinues(t *testing.T) {
@@ -283,7 +352,11 @@ func TestReindexInstanceRecords_Success(t *testing.T) {
 			_ = json.Unmarshal(payload, &data)
 			return len(data) == 0 // Empty map
 		}),
-		mock.Anything).
+		mock.MatchedBy(func(headers map[string]string) bool {
+			return headers[constant.OkapiTenantHeader] == tenantName &&
+				headers[constant.OkapiTokenHeader] == action.KeycloakAccessToken &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
+		})).
 		Return(nil)
 
 	// Act

@@ -462,6 +462,25 @@ func TestUpdateRealmAccessTokenSettings_LargeLifespan(t *testing.T) {
 	})
 }
 
+func TestUpdateRealmAccessTokenSettings_HeaderCreationError(t *testing.T) {
+	t.Run("TestUpdateRealmAccessTokenSettings_HeaderCreationError", func(t *testing.T) {
+		// Arrange
+		mockHTTP := &testhelpers.MockHTTPClient{}
+		action := testhelpers.NewMockAction()
+		action.KeycloakMasterAccessToken = "" // Empty token
+		mockVault := &MockVaultClient{}
+		mockMgmt := &MockManagementSvc{}
+		svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+		// Act
+		err := svc.UpdateRealmAccessTokenSettings("test-tenant", 1800)
+
+		// Assert
+		assert.Error(t, err)
+		mockHTTP.AssertNotCalled(t, "PutReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+	})
+}
+
 func TestUpdatePublicClientSettings_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
@@ -548,6 +567,27 @@ func TestUpdatePublicClientSettings_HTTPError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, expectedError, err)
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestUpdatePublicClientSettings_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakMasterAccessToken = "" // Empty token
+	action.ConfigGlobalEnv = map[string]string{
+		"KC_LOGIN_CLIENT_SUFFIX": "",
+	}
+	mockVault := &MockVaultClient{}
+	mockMgmt := &MockManagementSvc{}
+	svc := keycloaksvc.New(action, mockHTTP, mockVault, mockMgmt)
+
+	// Act
+	err := svc.UpdatePublicClientSettings("test-tenant", "http://test.com")
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PutReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
 }
 
 // ==================== GetAccessToken Tests ====================

@@ -90,7 +90,9 @@ func TestGetConsortiumByName_Success(t *testing.T) {
 				strings.Contains(url, "name=="+consortiumName)
 		}),
 		mock.MatchedBy(func(headers map[string]string) bool {
-			return headers[constant.OkapiTenantHeader] == centralTenant
+			return headers[constant.OkapiTenantHeader] == centralTenant &&
+				headers[constant.OkapiTokenHeader] == "test-token" &&
+				headers[constant.ContentTypeHeader] == constant.ApplicationJSON
 		}),
 		mock.AnythingOfType("*models.ConsortiumResponse")).
 		Run(func(args mock.Arguments) {
@@ -170,6 +172,46 @@ func TestGetConsortiumByName_HTTPError(t *testing.T) {
 	assert.Nil(t, result)
 	assert.Equal(t, "network error", err.Error())
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestGetConsortiumByName_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "central-tenant"
+	consortiumName := "test-consortium"
+
+	// Act
+	result, err := svc.GetConsortiumByName(centralTenant, consortiumName)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+}
+
+func TestGetConsortiumByName_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "" // Empty tenant
+	consortiumName := "test-consortium"
+
+	// Act
+	result, err := svc.GetConsortiumByName(centralTenant, consortiumName)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Nil(t, result)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
 }
 
 func TestGetConsortiumCentralTenant_Found(t *testing.T) {
@@ -517,6 +559,48 @@ func TestCreateConsortium_PostError(t *testing.T) {
 	assert.Empty(t, result)
 	assert.Equal(t, "post failed", err.Error())
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestCreateConsortium_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "central-tenant"
+	consortiumName := "new-consortium"
+
+	// Act
+	result, err := svc.CreateConsortium(centralTenant, consortiumName)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Empty(t, result)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
+func TestCreateConsortium_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "" // Empty tenant
+	consortiumName := "new-consortium"
+
+	// Act
+	result, err := svc.CreateConsortium(centralTenant, consortiumName)
+
+	// Assert
+	assert.Error(t, err)
+	assert.Empty(t, result)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
 }
 
 func TestGetSortedConsortiumTenants_Success(t *testing.T) {
@@ -1128,6 +1212,56 @@ func TestCreateConsortiumTenants_StatusCheckError(t *testing.T) {
 	mockHTTP.AssertExpectations(t)
 }
 
+func TestCreateConsortiumTenants_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "central-tenant"
+	consortiumID := "consortium-123"
+	adminUsername := "admin-user"
+
+	consortiumTenants := models.SortedConsortiumTenants{
+		&models.SortedConsortiumTenant{Name: centralTenant, IsCentral: 1},
+	}
+
+	// Act
+	err := svc.CreateConsortiumTenants(centralTenant, consortiumID, consortiumTenants, adminUsername)
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
+func TestCreateConsortiumTenants_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "" // Empty tenant
+	consortiumID := "consortium-123"
+	adminUsername := "admin-user"
+
+	consortiumTenants := models.SortedConsortiumTenants{
+		&models.SortedConsortiumTenant{Name: "test-tenant", IsCentral: 1},
+	}
+
+	// Act
+	err := svc.CreateConsortiumTenants(centralTenant, consortiumID, consortiumTenants, adminUsername)
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
 func TestEnableCentralOrdering_Success(t *testing.T) {
 	// Arrange
 	mockHTTP := &testhelpers.MockHTTPClient{}
@@ -1279,6 +1413,44 @@ func TestEnableCentralOrdering_PostError(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "post failed", err.Error())
 	mockHTTP.AssertExpectations(t)
+}
+
+func TestEnableCentralOrdering_HeaderCreationError(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "" // Empty token
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "central-tenant"
+
+	// Act
+	err := svc.EnableCentralOrdering(centralTenant)
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
+}
+
+func TestEnableCentralOrdering_BlankTenantName(t *testing.T) {
+	// Arrange
+	mockHTTP := &testhelpers.MockHTTPClient{}
+	action := testhelpers.NewMockAction()
+	action.KeycloakAccessToken = "test-token"
+	mockUserSvc := &MockUserSvc{}
+	svc := consortiumsvc.New(action, mockHTTP, mockUserSvc)
+
+	centralTenant := "" // Empty tenant
+
+	// Act
+	err := svc.EnableCentralOrdering(centralTenant)
+
+	// Assert
+	assert.Error(t, err)
+	mockHTTP.AssertNotCalled(t, "GetRetryReturnStruct", mock.Anything, mock.Anything, mock.Anything)
+	mockHTTP.AssertNotCalled(t, "PostReturnNoContent", mock.Anything, mock.Anything, mock.Anything)
 }
 
 func TestConsortiumTenantString(t *testing.T) {
