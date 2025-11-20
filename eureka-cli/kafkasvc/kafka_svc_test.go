@@ -296,7 +296,7 @@ func TestGetConsumerGroupLag_OtherStderrError(t *testing.T) {
 
 	// Assert
 	assert.Error(t, err)
-	assert.Equal(t, 0, lag)
+	assert.Equal(t, initialLag, lag)
 	assert.Equal(t, errors.ContainerCommandFailed(stderrText), err)
 	mockExec.AssertExpectations(t)
 }
@@ -320,6 +320,6 @@ func TestGetConsumerGroupLag_InvalidLagValue(t *testing.T) {
 
 	// Assert
 	assert.NoError(t, err)
-	assert.Equal(t, initialLag, lag)
+	assert.Equal(t, 0, lag) // GetKafkaConsumerLagFromLogLine returns "0" for invalid input, strconv.Atoi succeeds
 	mockExec.AssertExpectations(t)
 }

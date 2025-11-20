@@ -117,7 +117,7 @@ func (ks *KafkaSvc) getConsumerGroupLag(tenant string, consumerGroup string, ini
 			return initialLag, nil
 		}
 
-		return 0, errors.ContainerCommandFailed(stderrText)
+		return initialLag, errors.ContainerCommandFailed(stderrText)
 	}
 
 	lag, err = strconv.Atoi(helpers.GetKafkaConsumerLagFromLogLine(stdout))
