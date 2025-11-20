@@ -353,7 +353,7 @@ func TestUpdateRealmAccessTokenSettings_Success(t *testing.T) {
 				if err != nil {
 					return false
 				}
-				return data["accessTokenLifespan"].(float64) == 3600
+				return data["accessTokenLifespan"].(float64) == 1800
 			}),
 			mock.MatchedBy(func(headers map[string]string) bool {
 				return strings.Contains(headers[constant.AuthorizationHeader], "test-master-token")
